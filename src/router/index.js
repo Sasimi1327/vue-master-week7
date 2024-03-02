@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 const routes = [
   {
     path: '/',
+    name: '登入頁',
     component: () => import('../views/frontend/LoginView.vue'),
   },
   {
@@ -25,6 +26,10 @@ const routes = [
         component: () => import('../views/backend/AdminCouponsList.vue'),
       },
     ],
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('../views/ErrorPage.vue'),
   },
 ];
 
