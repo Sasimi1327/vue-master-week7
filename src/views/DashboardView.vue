@@ -43,6 +43,7 @@ export default {
     logout() {
       axios.post(`${VITE_URL}/logout`)
         .then((res) => {
+		  document.cookie = `HexSchoolVueToken=; expires=${new Date()};`
           Swal.fire({
             title: '登出狀態',
             text: res.data.message,
