@@ -13,6 +13,7 @@ export default {
     return {
       bsProductModal: null,
       tempProduct: {},
+      status: {},
     };
   },
   methods: {
@@ -22,6 +23,25 @@ export default {
     },
     hideModal() {
       this.bsProductModal.hide();
+    },
+    uploadFile() {
+      const uploadedFile = this.$refs.fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file-to-upload', uploadedFile);
+      const url = `${import.meta.env.VITE_URL}/api/${import.meta.env.VITE_PATH}/admin/upload`;
+      this.status.fileUploading = true;
+      this.$http.post(url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }).then((response) => {
+        this.status.fileUploading = false;
+        this.tempProduct.imageUrl = response.data.imageUrl;
+        this.$refs.fileInput.value = '';
+      }).catch((error) => {
+        this.status.fileUploading = false;
+        console.log(error.response.data.message);
+      });
     },
   },
   mounted() {
@@ -54,6 +74,18 @@ export default {
                 <img class="img-fluid"
                     :src="tempProduct.imageUrl"
                     :alt="tempProduct.title">
+              </div>
+              <div class="mb-3">
+                <label for="customFile" class="form-label"
+                >或 上傳圖片
+                  <i class="fas fa-spinner fa-spin"
+                  v-if="status.fileUploading"></i>
+                </label>
+                <input type="file"
+                      id="customFile"
+                      class="form-control"
+                      ref="fileInput"
+                      @change="uploadFile" />
               </div>
               <h3 class="mb-3">多圖新增</h3>
               <!-- 判斷 tempProduct.imagesUrl 是一個陣列 -->
@@ -102,9 +134,9 @@ export default {
                         v-model="tempProduct.category">
                 </div>
                 <div class="mb-3 col-md-6">
-                  <label for="unit" class="form-label">單位</label>
+                  <label for="unit" class="form-label">簡述</label>
                   <input id="unit" type="text" class="form-control"
-                        placeholder="請輸入單位"
+                        placeholder="請輸入簡述"
                         v-model="tempProduct.unit">
                 </div>
               </div>
